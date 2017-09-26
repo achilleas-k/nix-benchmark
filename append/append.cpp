@@ -15,9 +15,9 @@ float append(nix::Block &block, nix::Group &group, size_t count) {
 }
 
 
-std::vector<float> run_test(size_t N) {
+std::vector<float> run(size_t N) {
     std::vector<float> times(N);
-    nix::File file = nix::File::open("append_benchmark.nix", nix::FileMode::Overwrite);
+    nix::File file = nix::File::open("append-benchmark.nix", nix::FileMode::Overwrite);
     nix::Block b = file.createBlock("test", "test");
     nix::Group g = b.createGroup("group", "timing_test");
     for (size_t i = 0; i < N; i++) {
@@ -31,12 +31,10 @@ std::vector<float> run_test(size_t N) {
 int main(int argc, char** argv){
     /* size_t N = 100; */
     size_t N = atoi(argv[1]);
-    std::vector<float> times = run_test(N);
-    std::vector<float> cumul(N);
+    std::vector<float> times = run(N);
     float sum = 0.0;
     for (size_t i = 0; i < N; i++) {
         sum += times[i];
-        cumul[i] = sum;
         std::cout << i+1 << ", " << sum << std::endl;
     }
     /* std::cerr << sum << std::endl; */

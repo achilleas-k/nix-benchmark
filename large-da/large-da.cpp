@@ -4,28 +4,30 @@
 
 using namespace nix;
 
-
-float run_test(size_t n) {
-    nix::File file = nix::File::open("data-benchmark.nix", nix::FileMode::Overwrite);
+std::vector<float> run(size_t N) {
+    std::vector<float> times(N);
+    nix::File file = nix::File::open("/tmp/data-benchmark.nix", nix::FileMode::Overwrite);
     nix::Block b = file.createBlock("test", "test");
-    std::vector<double> data = std::vector<double>(n);
-    std::string name = "times" + nix::util::numToStr(n);
-    const clock_t begin_time = clock();
-    nix::DataArray da = b.createDataArray(name, "nix.event.positions", nix::DataType::Double, {1});
-    da.setData(data);
-    float time = float(clock () - begin_time) /  CLOCKS_PER_SEC;
+    std::vector<double> data = std::vector<double>(N);
+    std::string name = "times" + nix::util::numToStr(N);
+    for (size_t i = 0; i < N; i++) {
+        const clock_t begin_time = clock();
+        nix::DataArray da = b.createDataArray(name, "nix.event.positions", nix::DataType::Double, {1});
+        da.setData(data);
+        times[i] = float(clock () - begin_time) /  CLOCKS_PER_SEC;
+    }
     file.close();
-    return time;
+    return times;
 }
 
 
 int main(int argc, char** argv){
-    /* size_t N = 100; */
     size_t N = atoi(argv[1]);
-    float t;
-    for (size_t n = 0; n < N; n++) {
-        t = run_test(N);
-        std::cout << n+1 << ", " << t << std::endl;
+    std::vector<float> times = run(N);
+    float sum = 0.0;
+    for (size_t i = 0; i < N; i++) {
+        sum += times[i];
+        std::cout << i+1 << ", " << sum << std::endl;
     }
     return 0;
 }
