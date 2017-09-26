@@ -1,6 +1,5 @@
 import sys
 import pickle
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -21,10 +20,20 @@ def main():
         for k in results[fname]:
             plt.plot(nums, results[fname][k], label=f"{fname} - {k}")
 
+    cpptimes = []
+    with open("appendcpp.txt") as res:
+        for line in res.readlines():
+            if not line:
+                continue
+            n, t = line.split(" ")
+            cpptimes.append(float(t))
+    plt.plot(nums, cpptimes, label="C++ NIX")
+
     plt.legend(loc="best")
     plt.xlabel("N data arrays")
     plt.ylabel("Cumulative append time (s)")
     plt.savefig("times.png")
+    plt.show()
     print("Saved figure times.png")
 
 

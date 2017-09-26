@@ -1,6 +1,7 @@
 #!/bin/bash
 
 python=/usr/local/bin/python3
+N=500
 
 for pkg in $*
 do
@@ -8,7 +9,8 @@ do
     outfile=${outfile/egg/pkl}
     eggpath="$(pwd)/${pkg}"
     echo "Running benchmarks with $eggpath"
-    PYTHONPATH="$eggpath" $python append/append.py $outfile
+    PYTHONPATH="$eggpath" $python append/append.py $N $outfile
+    ./append/append $N > appendcpp.txt
     # PYTHONPATH="$eggpath" $python large-da/large-da.py $pkg
 done
 

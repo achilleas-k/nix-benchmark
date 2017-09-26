@@ -43,7 +43,7 @@ def runtest(backend, N):
 
 
 def runcpp(N):
-    out = check_output(["./append", str(N)])
+    out = check_output(["./append/append", str(N)])
     times = []
     for line in out.split(b"\n"):
         if not line:
@@ -53,26 +53,25 @@ def runcpp(N):
     return times
 
 
-def main(filename=None):
-    print(f"Running tests with {nix.__file__}")
-    N = 10000
-    N = 500
-    ptimes = runtest("h5py", N)
-    btimes = runtest("hdf5", N)
-    # ctimes = runcpp(N)
-    ptimes = np.cumsum(ptimes)
-    btimes = np.cumsum(btimes)
+def main(N, filename=None):
     if filename is None:
         filename = "results.pkl"
+    print(f"Loaded {nix.__file__}")
+    ptimes = runtest("h5py", N)
+    ptimes = np.cumsum(ptimes)
+    if "cpp" in filename:
+        btimes = runtest("hdf5", N)
+        btimes = np.cumsum(btimes)
 
     with open(filename, "wb") as fp:
         print(f"Saving results to {filename}")
-        pickle.dump({
-            "h5py": ptimes,
-            "hdf5": btimes,
-        }, fp)
+        if "cpp" in filename:
+            pickle.dump({"h5py": ptimes, "hdf5": btimes}, fp)
+        else:
+            pickle.dump({"h5py": ptimes}, fp)
 
 
 if __name__ == "__main__":
-    fname = sys.argv[1]
-    main(fname)
+    N = int(sys.argv[1])
+    fname = sys.argv[2]
+    main(N, fname)
