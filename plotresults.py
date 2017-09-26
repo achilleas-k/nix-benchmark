@@ -30,7 +30,7 @@ def plotbmresults(prefix):
                     continue
                 n, t = line.split(" ")
                 cpptimes.append(float(t))
-    plt.plot(nums, cpptimes, label="C++ NIX")
+        plt.plot(nums, cpptimes, label="C++ NIX")
 
     plt.legend(loc="best")
     plt.xlabel("N data arrays")

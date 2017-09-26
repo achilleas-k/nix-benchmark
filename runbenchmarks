@@ -8,12 +8,12 @@ do
     outfile=$(basename $pkg)
     eggpath="$(pwd)/${pkg}"
     pklfile=${outfile/egg/pkl}
-    txtfile=${outfile/egg/txt}
     echo "Running benchmarks with $eggpath"
     PYTHONPATH="$eggpath" $python append/append.py $N append-$pklfile
-    ./append/append $N > append-$txtfile
     PYTHONPATH="$eggpath" $python large-da/large-da.py $N lda-$pklfile
-    ./large-da/lda $N > lda-$txtfile
 done
+
+./append/append $N > append-times.txt
+./large-da/lda $N > lda-times.txt
 
 $python plotresults.py
