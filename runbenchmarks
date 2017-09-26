@@ -1,0 +1,15 @@
+#!/bin/bash
+
+python=/usr/local/bin/python3
+
+for pkg in $*
+do
+    outfile=$(basename $pkg)
+    outfile=${outfile/egg/pkl}
+    eggpath="$(pwd)/${pkg}"
+    echo "Running benchmarks with $eggpath"
+    PYTHONPATH="$eggpath" $python append/append.py $outfile
+    # PYTHONPATH="$eggpath" $python large-da/large-da.py $pkg
+done
+
+$python plotresults.py *.pkl
