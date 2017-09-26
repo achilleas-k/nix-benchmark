@@ -17,7 +17,7 @@ float append(nix::Block &block, nix::Group &group, size_t count) {
 
 std::vector<float> run(size_t N) {
     std::vector<float> times(N);
-    nix::File file = nix::File::open("append-benchmark.nix", nix::FileMode::Overwrite);
+    nix::File file = nix::File::open("/tmp/append-benchmark.nix", nix::FileMode::Overwrite);
     nix::Block b = file.createBlock("test", "test");
     nix::Group g = b.createGroup("group", "timing_test");
     for (size_t i = 0; i < N; i++) {

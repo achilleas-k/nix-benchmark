@@ -1,17 +1,19 @@
 #!/bin/bash
 
 python=/usr/local/bin/python3
-N=500
+N=5
 
 for pkg in $*
 do
     outfile=$(basename $pkg)
-    outfile=${outfile/egg/pkl}
     eggpath="$(pwd)/${pkg}"
+    pklfile=${outfile/egg/pkl}
+    txtfile=${outfile/egg/txt}
     echo "Running benchmarks with $eggpath"
-    PYTHONPATH="$eggpath" $python append/append.py $N $outfile
-    ./append/append $N > appendcpp.txt
-    # PYTHONPATH="$eggpath" $python large-da/large-da.py $pkg
+    PYTHONPATH="$eggpath" $python append/append.py $N append-$pklfile
+    ./append/append $N > append-$txtfile
+    PYTHONPATH="$eggpath" $python large-da/large-da.py $N lda-$pklfile
+    ./large-da/lda $N > lda-$txtfile
 done
 
-$python plotresults.py *.pkl
+$python plotresults.py

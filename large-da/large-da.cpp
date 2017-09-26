@@ -9,8 +9,8 @@ std::vector<float> run(size_t N) {
     nix::File file = nix::File::open("/tmp/data-benchmark.nix", nix::FileMode::Overwrite);
     nix::Block b = file.createBlock("test", "test");
     std::vector<double> data = std::vector<double>(N);
-    std::string name = "times" + nix::util::numToStr(N);
     for (size_t i = 0; i < N; i++) {
+        std::string name = "times" + nix::util::numToStr(i);
         const clock_t begin_time = clock();
         nix::DataArray da = b.createDataArray(name, "nix.event.positions", nix::DataType::Double, {1});
         da.setData(data);

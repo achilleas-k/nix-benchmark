@@ -1,10 +1,10 @@
-import sys
+from glob import glob
 import pickle
 import matplotlib.pyplot as plt
 
 
-def main():
-    pklfiles = sys.argv[1:]
+def plotbmresults(prefix):
+    pklfiles = glob(f"{prefix}-*.pkl")
     results = {}
     for fname in pklfiles:
         print(f"Loading from {fname}")
@@ -21,20 +21,28 @@ def main():
             plt.plot(nums, results[fname][k], label=f"{fname} - {k}")
 
     cpptimes = []
-    with open("appendcpp.txt") as res:
-        for line in res.readlines():
-            if not line:
-                continue
-            n, t = line.split(" ")
-            cpptimes.append(float(t))
+    txtfiles = glob(f"{prefix}-*.txt")
+    for fname in txtfiles:
+        print(f"Loading from {fname}")
+        with open(fname) as res:
+            for line in res.readlines():
+                if not line:
+                    continue
+                n, t = line.split(" ")
+                cpptimes.append(float(t))
     plt.plot(nums, cpptimes, label="C++ NIX")
 
     plt.legend(loc="best")
     plt.xlabel("N data arrays")
     plt.ylabel("Cumulative append time (s)")
-    plt.savefig("times.png")
+    plt.savefig(f"{prefix}.png")
     plt.show()
     print("Saved figure times.png")
+
+
+def main():
+    plotbmresults("append")
+    plotbmresults("lda")
 
 
 if __name__ == "__main__":

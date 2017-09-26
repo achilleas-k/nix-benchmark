@@ -30,7 +30,8 @@ def create_and_append(nixfile):
 
 
 def runtest(backend, N):
-    nixfile = nix.File.open("/tmp/append-test.h5", nix.FileMode.Overwrite,
+    nixfile = nix.File.open("/tmp/append-benchmark.nix",
+                            nix.FileMode.Overwrite,
                             backend=backend)
     blk = nixfile.create_block("blk", "blk")
     blk.create_group("grp", "grp")
@@ -55,7 +56,7 @@ def runcpp(N):
 
 def main(N, filename=None):
     if filename is None:
-        filename = "results.pkl"
+        filename = "appendresults.pkl"
     print(f"Loaded {nix.__file__}")
     ptimes = runtest("h5py", N)
     ptimes = np.cumsum(ptimes)

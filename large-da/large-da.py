@@ -1,12 +1,14 @@
+import sys
 import nixio as nix
 from time import time
-import matplotlib.pyplot as plt
 import numpy as np
-from subprocess import check_output
+import pickle
 
 
-def writepy(N):
-    nixfile = nix.File.open("/tmp/large-da-test.h5", nix.FileMode.Overwrite)
+def runtest(backend, N):
+    nixfile = nix.File.open("/tmp/data-data-benchmark.nix",
+                            nix.FileMode.Overwrite,
+                            backend=backend)
     blk = nixfile.create_block("blk", "blk")
     times = []
     for n in range(N):
@@ -22,40 +24,25 @@ def writepy(N):
     return times
 
 
-def runcpp(N):
-    out = check_output(["./largeda", str(N)])
-    times = []
-    for line in out.split(b"\n"):
-        if not line:
-            continue
-        n, t = line.split(b" ")
-        times.append(float(t))
-    return times
-
-
-def main():
-    N = 1000
-    ptimes = writepy(N)
-    btimes = runcpp(N)
+def main(N, filename=None):
+    if filename is None:
+        filename = "ldaresults.pkl"
+    print(f"Loaded {nix.__file__}")
+    ptimes = runtest("h5py", N)
     ptimes = np.cumsum(ptimes)
-    btimes = np.cumsum(btimes)
-    nums = range(1, N+1)
-    for idx, p, b in zip(nums, ptimes, btimes):
-        print("{:3d}: {:6.5f}    {:6.5f}".format(idx, p, b))
+    if "cpp" in filename:
+        btimes = runtest("hdf5", N)
+        btimes = np.cumsum(btimes)
 
-    p_linear = np.array(nums) * (ptimes[-1] / nums[-1])
-    b_linear = np.array(nums) * (btimes[-1] / nums[-1])
-    plt.figure()
-    plt.plot(nums, p_linear, "k--")
-    plt.plot(nums, ptimes, label="Python")
-    plt.plot(nums, b_linear, "k-.")
-    plt.plot(nums, btimes, label="C++")
-    plt.legend(loc="best")
-    plt.xlabel("len(DataArray)")
-    plt.ylabel("Cumulative append time (s)")
-    plt.savefig("times.png")
-    print("Saved figure times.png")
+    with open(filename, "wb") as fp:
+        print(f"Saving results to {filename}")
+        if "cpp" in filename:
+            pickle.dump({"h5py": ptimes, "hdf5": btimes}, fp)
+        else:
+            pickle.dump({"h5py": ptimes}, fp)
 
 
 if __name__ == "__main__":
-    main()
+    N = int(sys.argv[1])
+    fname = sys.argv[2]
+    main(N, fname)
