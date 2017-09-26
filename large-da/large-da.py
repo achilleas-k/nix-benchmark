@@ -6,7 +6,7 @@ import pickle
 
 
 def runtest(backend, N):
-    nixfile = nix.File.open("/tmp/data-data-benchmark.nix",
+    nixfile = nix.File.open(f"/tmp/data-benchmark-{backend}.nix",
                             nix.FileMode.Overwrite,
                             backend=backend)
     blk = nixfile.create_block("blk", "blk")

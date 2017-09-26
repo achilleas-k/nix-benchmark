@@ -37,7 +37,7 @@ def plotbmresults(prefix):
     plt.ylabel("Cumulative append time (s)")
     plt.savefig(f"{prefix}.png")
     plt.show()
-    print("Saved figure times.png")
+    print(f"Saved figure {prefix}.png")
 
 
 def main():
