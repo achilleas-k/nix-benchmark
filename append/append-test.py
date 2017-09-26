@@ -8,8 +8,7 @@ from subprocess import check_output
 
 def verify_file(backend, N):
     print("Verifying file")
-    nixfile = nix.File.open("/tmp/append-test.h5", nix.FileMode.ReadOnly,
-                            backend=backend)
+    nixfile = nix.File.open("/tmp/append-test.h5", nix.FileMode.ReadOnly)
     blk = nixfile.blocks["blk"]
     assert blk.type == "blk"
     grp = blk.groups["grp"]
@@ -53,27 +52,31 @@ def runcpp(N):
     return times
 
 
-N = 10000
-ptimes = runtest("h5py", N)
-# btimes = runtest("hdf5", N)
-btimes = runcpp(N)
-ptimes = np.cumsum(ptimes)
-# btimes = np.cumsum(btimes)
+if __name__ == "__main__":
+    N = 10000
+    ptimes = runtest("h5py", N)
+    btimes = runtest("hdf5", N)
+    ctimes = runcpp(N)
+    ptimes = np.cumsum(ptimes)
+    btimes = np.cumsum(btimes)
 
-nums = range(1, N+1)
-for idx, p, b in zip(nums, ptimes, btimes):
-    print("{:3d}: {:6.5f}    {:6.5f}".format(idx, p, b))
+    nums = range(1, N+1)
+    for idx, p, b, c in zip(nums, ptimes, btimes, ctimes):
+        print("{:3d}: {:6.5f}  {:6.5f}  {:6.5f}".format(idx, p, b, c))
 
-p_linear = np.array(nums) * (ptimes[-1] / nums[-1])
-b_linear = np.array(nums) * (btimes[-1] / nums[-1])
-plt.figure()
-# plt.ylim(0, 1.5)
-plt.plot(nums, p_linear, "k--")
-plt.plot(nums, ptimes, label="Python")
-plt.plot(nums, b_linear, "k-.")
-plt.plot(nums, btimes, label="C++")
-plt.legend(loc="best")
-plt.xlabel("N data arrays")
-plt.ylabel("Cumulative append time (s)")
-plt.savefig("times.png")
-print("Saved figure times.png")
+    p_linear = np.array(nums) * (ptimes[-1] / nums[-1])
+    b_linear = np.array(nums) * (btimes[-1] / nums[-1])
+    c_linear = np.array(nums) * (ctimes[-1] / nums[-1])
+    plt.figure()
+    # plt.ylim(0, 1.5)
+    plt.plot(nums, p_linear, "k--")
+    plt.plot(nums, ptimes, label="Python")
+    plt.plot(nums, b_linear, "k-.")
+    plt.plot(nums, btimes, label="Bindings")
+    plt.plot(nums, c_linear, "k--.")
+    plt.plot(nums, ctimes, label="C++")
+    plt.legend(loc="best")
+    plt.xlabel("N data arrays")
+    plt.ylabel("Cumulative append time (s)")
+    plt.savefig("times.png")
+    print("Saved figure times.png")
