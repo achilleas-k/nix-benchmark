@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def plotbmresults(prefix):
-    pklfiles = glob(f"{prefix}-*.pkl")
+    pklfiles = glob(f"results/{prefix}-*.pkl")
     results = {}
     for fname in pklfiles:
         print(f"Loading from {fname}")
@@ -21,7 +21,7 @@ def plotbmresults(prefix):
             plt.plot(nums, results[fname][k], label=f"{fname} - {k}")
 
     cpptimes = []
-    txtfiles = glob(f"{prefix}-*.txt")
+    txtfiles = glob(f"results/{prefix}-*.txt")
     for fname in txtfiles:
         print(f"Loading from {fname}")
         with open(fname) as res:
@@ -35,9 +35,9 @@ def plotbmresults(prefix):
     plt.legend(loc="best")
     plt.xlabel("N data arrays")
     plt.ylabel("Cumulative append time (s)")
-    plt.savefig(f"{prefix}.png")
+    plt.savefig(f"results/{prefix}.png")
     plt.show()
-    print(f"Saved figure {prefix}.png")
+    print(f"Saved figure results/{prefix}.png")
 
 
 def main():

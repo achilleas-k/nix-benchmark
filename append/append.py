@@ -3,7 +3,6 @@ import nixio as nix
 from time import time
 from uuid import uuid4
 import numpy as np
-from subprocess import check_output
 import pickle
 
 
@@ -40,17 +39,6 @@ def runtest(backend, N):
         times.append(create_and_append(nixfile))
     nixfile.close()
     # verify_file(backend, N)
-    return times
-
-
-def runcpp(N):
-    out = check_output(["./append/append", str(N)])
-    times = []
-    for line in out.split(b"\n"):
-        if not line:
-            continue
-        n, t = line.split(b" ")
-        times.append(float(t))
     return times
 
 
