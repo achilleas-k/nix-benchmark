@@ -1,4 +1,5 @@
 import sys
+import h5py
 import nixio as nix
 from time import time
 import numpy as np
@@ -24,6 +25,26 @@ def runtest(backend, N):
     return times
 
 
+def benchmarkdirect(N):
+    h5file = h5py.File("/tmp/append-benchmark-direct.h5", "w")
+    blk = h5file.create_group("blk")
+    times = []
+    for n in range(N):
+        data = np.random.random(n)
+        name = "data" + str(n)
+        t0 = time()
+        da = blk.create_group(name)
+        dataset = da.require_dataset(
+            name, shape=(n,), dtype=data.dtype,
+            chunks=True, maxshape=(None,)
+        )
+        dataset[:] = data
+        t1 = time()
+        times.append(t1-t0)
+    h5file.close()
+    return times
+
+
 def main(N, filename=None):
     if filename is None:
         filename = "ldaresults.pkl"
@@ -33,13 +54,16 @@ def main(N, filename=None):
     if "cpp" in filename:
         btimes = runtest("hdf5", N)
         btimes = np.cumsum(btimes)
+        htimes = benchmarkdirect(N)
+        htimes = np.cumsum(htimes)
 
     with open(filename, "wb") as fp:
-        print(f"Saving results to {filename}")
+        results = {"h5py": ptimes}
         if "cpp" in filename:
-            pickle.dump({"h5py": ptimes, "hdf5": btimes}, fp)
-        else:
-            pickle.dump({"h5py": ptimes}, fp)
+            results["hdf5"] = btimes
+            results["h5direct"] = htimes
+        print(f"Saving results to {filename}")
+        pickle.dump(results, fp)
 
 
 if __name__ == "__main__":
