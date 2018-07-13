@@ -63,7 +63,7 @@ def main(N):
         print(f"Saving results to {filename}")
         pickle.dump(res, fp)
 
-    res = run(largeda, N)
+    res = run(largeda, N*10)
     plot_results(res, title="large DA", xlabel="DA size")
     filename = "largeda.pkl"
     with open(filename, "wb") as fp:
