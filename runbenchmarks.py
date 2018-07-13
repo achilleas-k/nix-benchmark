@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 import nixio as nixio14
 import nixionew
 from append import append
-from largeda import largeda
+# from largeda import largeda
 
 
 tmpdir = TemporaryDirectory(prefix="nixbenchmarks")
@@ -69,12 +69,12 @@ def main(N):
         print(f"Saving results to {filename}")
         pickle.dump(res, fp)
 
-    res = run(largeda, N*10)
-    plot_results(res, title="large DA", xlabel="DA size")
-    filename = "largeda.pkl"
-    with open(filename, "wb") as fp:
-        print(f"Saving results to {filename}")
-        pickle.dump(res, fp)
+    # res = run(largeda, N*10)
+    # plot_results(res, title="large DA", xlabel="DA size")
+    # filename = "largeda.pkl"
+    # with open(filename, "wb") as fp:
+    #     print(f"Saving results to {filename}")
+    #     pickle.dump(res, fp)
 
 
 if __name__ == "__main__":
