@@ -24,10 +24,8 @@ std::vector<float> run(size_t N) {
 int main(int argc, char** argv){
     size_t N = atoi(argv[1]);
     std::vector<float> times = run(N);
-    float sum = 0.0;
     for (size_t i = 0; i < N; i++) {
-        sum += times[i];
-        std::cout << i+1 << ", " << sum << std::endl;
+        std::cout << i+1 << ", " << times[i] << std::endl;
     }
     return 0;
 }
