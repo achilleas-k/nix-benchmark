@@ -36,7 +36,8 @@ def run(test, N):
 
     print("Running nix(C++)")
     tname = test.__name__.split(".")[-1]
-    times = check_output([f"./{tname}/{tname}", str(N)])
+    times = check_output([f"./{tname}/{tname}", str(N)],
+                         env={"LD_LIBRARY_PATH": "/usr/local/lib"})
     times = [float(t.split(b", ")[1]) for t in times.splitlines()]
     res["nix(C++)"] = times
 
