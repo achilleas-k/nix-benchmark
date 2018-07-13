@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 
 import nixio as nixio14
 import nixionew
+import h5py
 from append import append
 # from largeda import largeda
 
@@ -46,6 +47,12 @@ def run(test, N):
                          env={"LD_LIBRARY_PATH": "/usr/local/lib"})
     times = [float(t.split(b", ")[1]) for t in times.splitlines()]
     res["nix(C++)"] = times
+
+    print("Running h5py")
+    hf = h5py.File(tmpfile, mode="w")
+    times = test.runtest_h5py(hf, N)
+    res["h5py"] = times
+    hf.close()
 
     return res
 

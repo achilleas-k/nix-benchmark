@@ -31,3 +31,22 @@ def runtest(nixfile, N):
         times.append(create_and_append(nixfile))
     verify_file(nixfile, N)
     return np.cumsum(times)
+
+
+def create_and_append_h5py(hfile):
+    blk = hfile["blk"]
+    grp = blk["grp"]
+    name = "da" + uuid4().hex
+    da = blk.create_dataset(name, (1,))
+    t0 = time()
+    grp[name] = da
+    return time()-t0
+
+
+def runtest_h5py(hfile, N):
+    blk = hfile.create_group("blk")
+    blk.create_group("grp")
+    times = []
+    for n in range(N):
+        times.append(create_and_append_h5py(hfile))
+    return np.cumsum(times)
