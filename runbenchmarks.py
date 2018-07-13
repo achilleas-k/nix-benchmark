@@ -51,7 +51,7 @@ def plot_results(res, title="", xlabel=""):
     plt.title(title)
     plt.legend(loc="best")
     plt.xlabel(xlabel)
-    plt.ylabel("Cumulative append time (s)")
+    plt.ylabel("Write time (s)")
     plt.show()
 
 
