@@ -18,7 +18,7 @@ def create_and_append(nixfile):
     grp = blk.groups[0]
     # prepending stuff to uuid because having a uuid as name confuses NIX
     da = blk.create_data_array("da" + uuid4().hex, "da", data=[])
-    t0 = time()
+    t0 = time()  # measure append time only!
     grp.data_arrays.append(da)
     return time()-t0
 

@@ -10,8 +10,8 @@ def runtest(nixfile, N):
         data = np.random.random(n)
         name = "data" + str(n)
         # blk.create_data_array(name, "test", data=data)
-        t0 = time()
         da = blk.create_data_array(name, "test", shape=(n,))
+        t0 = time()  # measure write data time only!
         da.write_direct(data)
         t1 = time()
         times.append(t1-t0)

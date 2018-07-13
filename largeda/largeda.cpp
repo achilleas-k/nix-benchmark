@@ -11,8 +11,8 @@ std::vector<float> run(size_t N) {
     std::vector<double> data = std::vector<double>(N);
     for (size_t i = 0; i < N; i++) {
         std::string name = "times" + nix::util::numToStr(i);
-        const clock_t begin_time = clock();
         nix::DataArray da = b.createDataArray(name, "nix.event.positions", nix::DataType::Double, {1});
+        const clock_t begin_time = clock();
         da.setData(data);
         times[i] = float(clock () - begin_time) /  CLOCKS_PER_SEC;
     }
