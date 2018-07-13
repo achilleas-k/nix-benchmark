@@ -1,7 +1,9 @@
+import os
 import sys
 import pickle
 import matplotlib.pyplot as plt
 from subprocess import check_output
+from tempfile import TemporaryDirectory
 
 import nixio as nixio14
 import nixionew
@@ -9,10 +11,14 @@ from append import append
 from largeda import largeda
 
 
+tmpdir = TemporaryDirectory(prefix="nixbenchmarks")
+tmpfile = os.path.join(tmpdir.name, "nixbench.nix")
+
+
 def run(test, N):
     res = dict()
     print("Running nixio14/h5py")
-    nf = nixio14.File.open("/tmp/nixbench.nix",
+    nf = nixio14.File.open(tmpfile,
                            mode=nixio14.FileMode.Overwrite,
                            backend="h5py")
     times = test.runtest(nf, N)
@@ -20,7 +26,7 @@ def run(test, N):
     nf.close()
 
     print("Running nixio14/hdf5")
-    nf = nixio14.File.open("/tmp/nixbench.nix",
+    nf = nixio14.File.open(tmpfile,
                            mode=nixio14.FileMode.Overwrite,
                            backend="hdf5")
     times = test.runtest(nf, N)
@@ -28,7 +34,7 @@ def run(test, N):
     nf.close()
 
     print("Running nixionew")
-    nf = nixionew.File.open("/tmp/nixbench.nix",
+    nf = nixionew.File.open(tmpfile,
                             mode=nixionew.FileMode.Overwrite)
     times = test.runtest(nf, N)
     res["nixionew"] = times
