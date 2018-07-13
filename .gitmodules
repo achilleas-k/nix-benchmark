@@ -1,0 +1,8 @@
+[submodule "nixpy14"]
+	path = nixpy14
+	url = https://github.com/G-Node/nixpy
+	branch = v1.4
+[submodule "nixpynew"]
+	path = nixpynew
+	url = https://github.com/achilleas-k/nixpy
+	branch = new-container

@@ -1,15 +1,9 @@
-import sys
 import h5py
-import nixio as nix
 from time import time
 import numpy as np
-import pickle
 
 
-def runtest(backend, N):
-    nixfile = nix.File.open(f"/tmp/data-benchmark-{backend}.nix",
-                            nix.FileMode.Overwrite,
-                            backend=backend)
+def runtest(nixfile, N):
     blk = nixfile.create_block("blk", "blk")
     times = []
     for n in range(N):
@@ -21,7 +15,6 @@ def runtest(backend, N):
         da.write_direct(data)
         t1 = time()
         times.append(t1-t0)
-    nixfile.close()
     return times
 
 
@@ -43,30 +36,3 @@ def benchmarkdirect(N):
         times.append(t1-t0)
     h5file.close()
     return times
-
-
-def main(N, filename=None):
-    if filename is None:
-        filename = "ldaresults.pkl"
-    print(f"Loaded {nix.__file__}")
-    ptimes = runtest("h5py", N)
-    ptimes = np.cumsum(ptimes)
-    if "cpp" in filename:
-        btimes = runtest("hdf5", N)
-        btimes = np.cumsum(btimes)
-        htimes = benchmarkdirect(N)
-        htimes = np.cumsum(htimes)
-
-    with open(filename, "wb") as fp:
-        results = {"h5py": ptimes}
-        if "cpp" in filename:
-            results["hdf5"] = btimes
-            results["h5direct"] = htimes
-        print(f"Saving results to {filename}")
-        pickle.dump(results, fp)
-
-
-if __name__ == "__main__":
-    N = int(sys.argv[1])
-    fname = sys.argv[2]
-    main(N, fname)
