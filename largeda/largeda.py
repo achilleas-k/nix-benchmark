@@ -19,7 +19,7 @@ def runtest(nixfile, N):
 
 
 def benchmarkdirect(N):
-    h5file = h5py.File("/tmp/append-benchmark-direct.h5", "w")
+    h5file = h5py.File("/tmp/append-benchmark-direct.nix", "w")
     blk = h5file.create_group("blk")
     times = []
     for n in range(N):
