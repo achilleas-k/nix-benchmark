@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-python=/usr/local/bin/python3
+set -euo pipefail
+
+python=python3
 N=200
 
 for pkg in $*
