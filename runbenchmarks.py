@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 import nixio as nixio14
 import nixionew
 import h5py
+import neo
 from append import append
 # from largeda import largeda
 
@@ -53,6 +54,20 @@ def run(test, N):
     times = test.runtest_h5py(hf, N)
     res["h5py"] = times
     hf.close()
+
+    print("Running neo/nixio14")
+    neo.io.nixio.nix = nixio14
+    io = neo.NixIO(tmpfile, mode="ow")
+    times = test.runtest_neo(io, N)
+    res["neo/nixio14"] = times
+    io.close()
+
+    print("Running neo/nixionew")
+    neo.io.nixio.nix = nixionew
+    io = neo.NixIO(tmpfile, mode="ow")
+    times = test.runtest_neo(io, N)
+    res["neo/nixionew"] = times
+    io.close()
 
     return res
 

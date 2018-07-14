@@ -1,6 +1,8 @@
 from time import time
 from uuid import uuid4
 import numpy as np
+import neo
+import quantities as pq
 
 
 def verify_file(nixfile, N):
@@ -50,3 +52,20 @@ def runtest_h5py(hfile, N):
     for n in range(N):
         times.append(create_and_append_h5py(hfile))
     return np.cumsum(times)
+
+
+def runtest_neo(io, N):
+    times = []
+    blk = neo.Block()
+    seg = neo.Segment()
+    blk.segments.append(seg)
+    for n in range(N):
+        seg.analogsignals = []
+        for ni in range(n):
+            seg.analogsignals.append(neo.AnalogSignal(signal=[0],
+                                                      units="V",
+                                                      sampling_rate=1 * pq.Hz))
+        t0 = time()
+        io.write_block(blk)
+        times.append(time() - t0)
+    return times

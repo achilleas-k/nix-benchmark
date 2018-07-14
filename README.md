@@ -13,7 +13,8 @@ Candidates:
   3. NIXPY PyCore (h5py) backend (v1.4).
   4. New (optimised) NIXPY without bindings (currently found in the [new-container](https://github.com/achilleas-k/nixpy/tree/new-container) branch).
   5. H5Py directly.
-
+  6. Neo NixIO with NIXPY v1.4.
+  7. Neo NixIO with new NIXPY.
 
 ## TODO
 
