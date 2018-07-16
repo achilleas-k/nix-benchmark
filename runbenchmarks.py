@@ -2,7 +2,6 @@ import os
 import sys
 import pickle
 import matplotlib.pyplot as plt
-from subprocess import check_output
 from tempfile import TemporaryDirectory
 
 import nixio as nixio14
@@ -43,10 +42,7 @@ def run(test, N):
     nf.close()
 
     print("Running nix(C++)")
-    tname = test.__name__.split(".")[-1]
-    times = check_output([f"./{tname}/{tname}", str(N)],
-                         env={"LD_LIBRARY_PATH": "/usr/local/lib"})
-    times = [float(t.split(b", ")[1]) for t in times.splitlines()]
+    times = test.runtest_nix(N)
     res["nix(C++)"] = times
 
     print("Running h5py")
@@ -74,12 +70,15 @@ def run(test, N):
 
 def plot_results(res, title="", xlabel=""):
     for name, times in res.items():
-        plt.plot(times, label=name)
+        plt.plot(*times, label=name)
     plt.legend()
     plt.title(title)
     plt.legend(loc="best")
     plt.xlabel(xlabel)
     plt.ylabel("Write time (s)")
+    figname = os.path.join("results", f"{title}.png")
+    print(f"Saving plot to {figname}")
+    plt.savefig(figname)
     plt.show()
 
 

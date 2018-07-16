@@ -3,6 +3,7 @@ from uuid import uuid4
 import numpy as np
 import neo
 import quantities as pq
+from subprocess import check_output
 
 
 def verify_file(nixfile, N):
@@ -31,8 +32,11 @@ def runtest(nixfile, N):
     times = []
     for n in range(N):
         times.append(create_and_append(nixfile))
+        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
     verify_file(nixfile, N)
-    return np.cumsum(times)
+    times = np.cumsum(times)
+    print(f"Total time: {times[-1]:7.05f} s")
+    return list(range(N)), times
 
 
 def create_and_append_h5py(hfile):
@@ -51,7 +55,10 @@ def runtest_h5py(hfile, N):
     times = []
     for n in range(N):
         times.append(create_and_append_h5py(hfile))
-    return np.cumsum(times)
+        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
+    times = np.cumsum(times)
+    print(f"Total time: {times[-1]:7.05f} s")
+    return list(range(N)), times
 
 
 def runtest_neo(io, N):
@@ -59,7 +66,11 @@ def runtest_neo(io, N):
     blk = neo.Block()
     seg = neo.Segment()
     blk.segments.append(seg)
-    for n in range(N):
+    step = 1
+    if N >= 10:
+        step = N//10
+    Ns = list()
+    for n in range(0, N, step):
         seg.analogsignals = []
         for ni in range(n):
             seg.analogsignals.append(neo.AnalogSignal(signal=[0],
@@ -68,4 +79,15 @@ def runtest_neo(io, N):
         t0 = time()
         io.write_block(blk)
         times.append(time() - t0)
-    return times
+        Ns.append(n)
+        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
+    print(f"Last write time: {times[-1]:7.05f} s")
+    return Ns, times
+
+
+def runtest_nix(N):
+    times = check_output([f"./append/append", str(N)],
+                         env={"LD_LIBRARY_PATH": "/usr/local/lib"})
+    times = [float(t.split(b", ")[1]) for t in times.splitlines()]
+    print(f"Total time: {times[-1]:7.05f} s")
+    return list(range(N)), times
