@@ -33,9 +33,9 @@ def runtest(nixfile, N):
     for n in range(N):
         times.append(create_and_append(nixfile))
         print(f" :: {n}/{N} {int(n/N*100):3d}%", end="\r")
-    verify_file(nixfile, N)
     times = np.cumsum(times)
     print(f" :: Total time: {times[-1]:7.05f} s")
+    verify_file(nixfile, N)
     return list(range(N)), times
 
 
@@ -70,7 +70,7 @@ def runtest_neo(io, N):
     if N >= 10:
         step = N//10
     Ns = list()
-    for n in range(0, N, step):
+    for n in range(0, N+step, step):
         seg.analogsignals = []
         for ni in range(n):
             seg.analogsignals.append(neo.AnalogSignal(signal=[0],
@@ -81,8 +81,21 @@ def runtest_neo(io, N):
         times.append(time() - t0)
         Ns.append(n)
         print(f" :: {n}/{N} {int(n/N*100):3d}%", end="\r")
-    verify_file(io.nixfile, N)
+
     print(f" :: Last write time: {times[-1]:7.05f} s")
+
+    print("Verifying neo-nix file")
+    assert len(io.nix_file.blocks) == 1
+    blk = io.nix_file.blocks[0]
+    assert blk.type == "neo.block"
+
+    assert len(blk.groups) == 1
+    grp = blk.groups[0]
+    assert grp.type == "neo.segment"
+
+    assert len(blk.data_arrays) == N
+    assert len(grp.data_arrays) == N
+
     return Ns, times
 
 
