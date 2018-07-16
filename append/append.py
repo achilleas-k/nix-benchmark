@@ -32,10 +32,10 @@ def runtest(nixfile, N):
     times = []
     for n in range(N):
         times.append(create_and_append(nixfile))
-        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
+        print(f" :: {n}/{N} {int(n/N*100):3d}%", end="\r")
     verify_file(nixfile, N)
     times = np.cumsum(times)
-    print(f"Total time: {times[-1]:7.05f} s")
+    print(f" :: Total time: {times[-1]:7.05f} s")
     return list(range(N)), times
 
 
@@ -55,9 +55,9 @@ def runtest_h5py(hfile, N):
     times = []
     for n in range(N):
         times.append(create_and_append_h5py(hfile))
-        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
+        print(f" :: {n}/{N} {int(n/N*100):3d}%", end="\r")
     times = np.cumsum(times)
-    print(f"Total time: {times[-1]:7.05f} s")
+    print(f" :: Total time: {times[-1]:7.05f} s")
     return list(range(N)), times
 
 
@@ -80,8 +80,9 @@ def runtest_neo(io, N):
         io.write_block(blk)
         times.append(time() - t0)
         Ns.append(n)
-        print(f" {n}/{N} {int(n/N*100):3d}%", end="\r")
-    print(f"Last write time: {times[-1]:7.05f} s")
+        print(f" :: {n}/{N} {int(n/N*100):3d}%", end="\r")
+    verify_file(io.nixfile, N)
+    print(f" :: Last write time: {times[-1]:7.05f} s")
     return Ns, times
 
 
@@ -89,5 +90,5 @@ def runtest_nix(N):
     times = check_output([f"./append/append", str(N)],
                          env={"LD_LIBRARY_PATH": "/usr/local/lib"})
     times = [float(t.split(b", ")[1]) for t in times.splitlines()]
-    print(f"Total time: {times[-1]:7.05f} s")
+    print(f" :: Total time: {times[-1]:7.05f} s")
     return list(range(N)), times

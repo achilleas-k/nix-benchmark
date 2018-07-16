@@ -5,7 +5,7 @@ Collection of benchmark scripts for determining the relative performance of NIX 
 
 Benchmarks:
   1. Create objects (DataArrays) on a Block and append them to a Group ([append](append)).
-  2. Create DataArrays with large datasets ([largeda](largeda)).
+  2. _Currently disabled_: Create DataArrays with large datasets ([largeda](largeda)).
 
 Candidates:
   1. NIX (C++).
